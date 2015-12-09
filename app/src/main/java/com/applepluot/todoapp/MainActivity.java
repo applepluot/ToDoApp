@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         writeItems();
     }
 
+    // adb shell more /data/data/com.applepluot.todoapp/files/todo.txt
     private void readItems() {
         File filesDir = getFilesDir();
         File file = new File(filesDir, "todo.txt");
