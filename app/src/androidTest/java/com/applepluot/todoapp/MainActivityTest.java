@@ -1,6 +1,8 @@
 package com.applepluot.todoapp;
 
 import android.support.test.espresso.action.ViewActions;
+import android.support.test.espresso.assertion.ViewAssertions;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -16,7 +18,10 @@ import static android.support.test.espresso.action.ViewActions.longClick;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withHint;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 
 @RunWith(AndroidJUnit4.class)
@@ -36,11 +41,16 @@ public class MainActivityTest {
         onView(withId(R.id.btnAdd))
                 .perform(ViewActions.click());
 
-        // Delete
-        onData(startsWith("Hello"))
+        onData(allOf(is(instanceOf(String.class)), is("Hello")))
                 .inAdapterView(withId(R.id.lvItems))
                 .atPosition(0)
-                .perform(longClick());
+                .check(ViewAssertions.matches(ViewMatchers.withText("Hello")));
+
+        // Delete
+        onData(allOf(is(instanceOf(String.class)), is("Hello"))) // Use Hamcrest matchers to match item
+                .inAdapterView(withId(R.id.lvItems)) // Specify the explicit id of the ListView
+                .atPosition(0)
+                .perform(longClick()); // Standard ViewAction
     }
 
     @Test
