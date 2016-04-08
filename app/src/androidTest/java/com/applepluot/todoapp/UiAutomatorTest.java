@@ -20,13 +20,16 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import static junit.framework.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
 @RunWith(AndroidJUnit4.class)
 @SdkSuppress(minSdkVersion = 18)
 public class UiAutomatorTest {
     private static final String TODO_APP_PACKAGE
             = "com.applepluot.todoapp";
-    private static final int LAUNCH_TIMEOUT = 5000;
+    private static final int LAUNCH_TIMEOUT = 10000;
+    private static final int DEFAULT_TIMEOUT = 3000;
     private static final String TAG = UiAutomatorTest.class.getSimpleName();
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
     private UiDevice mDevice;
@@ -41,14 +44,9 @@ public class UiAutomatorTest {
 
         // Wait for launcher
         final String launcherPackage = mDevice.getLauncherPackageName();
+        assertThat(launcherPackage, notNullValue());
         mDevice.wait(Until.hasObject(By.pkg(launcherPackage).depth(0)), LAUNCH_TIMEOUT);
-        launchApp();
 
-        // Wait for the app to appear
-        mDevice.wait(Until.hasObject(By.pkg(TODO_APP_PACKAGE).depth(0)), LAUNCH_TIMEOUT);
-    }
-
-    private void launchApp() {
         // Launch the app
         Context context = InstrumentationRegistry.getContext();
         final Intent intent = context.getPackageManager()
@@ -56,6 +54,9 @@ public class UiAutomatorTest {
         // Clear out any previous instances
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         context.startActivity(intent);
+
+        // Wait for the app to appear
+        mDevice.wait(Until.hasObject(By.pkg(TODO_APP_PACKAGE).depth(0)), LAUNCH_TIMEOUT);
     }
 
     @Test
@@ -63,27 +64,22 @@ public class UiAutomatorTest {
         Log.i(TAG, "testAppLaunch");
         UiObject2 addButton = mDevice.findObject(By.res(TODO_APP_PACKAGE, "btnAdd"));
         assertTrue(addButton.isEnabled());
-        Log.d(TAG, "Backgrounding app");
-        UiDevice.getInstance(InstrumentationRegistry.getInstrumentation()).pressBack();
-        //relaunch
-        Log.i(TAG, "Relaunch app");
-        launchApp();
     }
 
     @Test
     public void testAddAndRemoveItem() {
         Log.i(TAG, "testAddAndRemoveItem");
         UiObject2 addButton = mDevice.findObject(By.res(TODO_APP_PACKAGE, "btnAdd"));
-        UiObject2 editText = mDevice.findObject(By.res(TODO_APP_PACKAGE, "etAddItemText"));
+        UiObject2 addItemText = mDevice.wait(Until.findObject(
+                By.res(TODO_APP_PACKAGE, "etAddItemText")), DEFAULT_TIMEOUT);
         String newItemText = sdf.format(Calendar.getInstance().getTime());
         Log.i(TAG, "adding " + newItemText);
-        editText.setText(newItemText);
+        addItemText.setText(newItemText);
         addButton.click();
         Log.i(TAG, "removing " + newItemText);
-        UiObject2 newItem = mDevice.findObject(By.text(newItemText));
+        UiObject2 newItem = mDevice.wait(Until.findObject(By.text(newItemText)), DEFAULT_TIMEOUT);
         assertTrue(newItem.isEnabled());
         longClick(newItem);
-
     }
 
     // This is a workaround for item.longClick() which doesn't seem to work.

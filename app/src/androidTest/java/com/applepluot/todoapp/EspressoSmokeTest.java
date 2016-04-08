@@ -25,7 +25,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
 
 @RunWith(AndroidJUnit4.class)
-public class MainActivityTest {
+public class EspressoSmokeTest {
     @Rule
     public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule<>(
             MainActivity.class);
