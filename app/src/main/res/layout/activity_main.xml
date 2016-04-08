@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:text="@string/add"
         android:id="@+id/btnAdd"
+        android:contentDescription="@string/add_button"
         android:onClick="onAddItem"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
