@@ -10,6 +10,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.logging.Logger;
+
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.clearText;
@@ -26,6 +28,8 @@ import static org.hamcrest.CoreMatchers.startsWith;
 
 @RunWith(AndroidJUnit4.class)
 public class EspressoSmokeTest {
+    Logger logger = Logger.getLogger(this.getClass().getName());
+
     @Rule
     public ActivityTestRule<MainActivity> activityRule = new ActivityTestRule<>(
             MainActivity.class);
